@@ -1,0 +1,62 @@
+general:
+  seed: 0
+  device: "cuda"
+  device_ids: [0]
+  models_path: RES/
+  num_workers: 2
+
+model:
+  filters: [36,36,36] #[21,21] #[15,15]
+  amplifications: [20,8,8] #[20,20] #[10,10]
+  strides: [2,2,2] # [2,3] [2,3]
+  kernelsizes: [3,3,3] # [2,3] [2,3]
+  groups: [3,36,36] # [1,1] [1,1]
+  fc: 1764 # 525 375
+  nchannel: 3 # 1
+  g_remove_last_bn: False
+  step_quantization: 0.008  # 0.08 ou 0.02 s = 2 x epsilonK
+
+
+train:
+  n_epoch: 20
+  batch_size_train: 128
+  adv_epsilon: min(epoch/100, 1)*2/255
+  adv_step: min(epoch/50,0.9)*10+1
+  weight_decay: 0.0005 # 0.0005 - 0.0002 - 0.0001
+  a_bit_final: 2 #normal=8
+  loss_type: CrossEntropyLoss
+  optimizer_type: Adam
+  lr: [0.0005,0.000025]
+  epochs_lr: [50]
+  l1_reg: Yes
+  l1_coef: 0.0001
+  clip_grad_norm: 0.6
+
+eval:
+  batch_size_test: 128
+  pruning: Yes
+  coef_mul: 100
+
+get_exp:
+  path_exp: ./RES_CLOUD/cifar10-real/
+  #./RES_CLOUD/24_48_max_stride_3channel/
+  #./RES_CLOUD/24_48_max_stride_3channel/
+  filter_occurence: 0
+  filtre_exp: Yes
+  proportion: 0.2
+  proba: 0.1
+
+eval_with_sat:
+  modeltoeval: normal # normal - prune - filtered - prune_filtered
+  mode_eval: verification #evaluation_robuste #evaluation #verification #verification_vitesse
+  encoding_type: 0
+  number_ici: 0
+  attack_eps_ici: 8
+  coef: 3
+  type_norm_noise: inf #inf, l1, l2
+  quant_noise: 100
+  coef_multiply_equation_noise: 1000
+
+solve_sat_formulas_per_img:
+  sat_solver: Minicard # Glucose3 Glucose4 Minicard Minisat22 Lingeling
+  time_out: 120

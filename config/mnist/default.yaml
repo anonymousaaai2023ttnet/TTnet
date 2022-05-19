@@ -1,0 +1,67 @@
+general:
+  seed: 0
+  device: "cuda"
+  device_ids: [0]
+  models_path: RES_all_train/
+  num_workers: 2
+
+
+
+model:
+  cbd: ""
+  famille: model_general # model_general model_sans_ampli model_general_realLR model_general_activbin3 model_general_all
+  filters: [16,32] #[24,24,48,48]
+  amplifications: [48,8] #[30,8,8,8,8]
+  strides: [2,2] #[2,1,2,1]
+  kernelsizes: [3,3] #[2,2,2,2]
+  groups: [1,16] #[1,12,12,24]
+  fc: 1152 #2352 #1200K
+  nchannel: 1 # 1
+  g_remove_last_bn: False
+  step_quantization: 0.21 # 0.8  # 0.61 ou 0.21 s = 2 x epsilonK
+
+
+
+train:
+  n_epoch: 90
+  batch_size_train: 128
+  adv_epsilon: min(epoch/45, 1)*0.3 #min(epoch/45, 1)*0.2 min(epoch/45, 0)*0.0
+  adv_step: min(epoch/22,0.9)*10+1 #min(epoch/22,0.9)*10+1 min(epoch/22,0.)*0+0
+  weight_decay: 0.0005 # 0.0005 - 0.0002 - 0.0001
+  a_bit_final: 2 #normal=8
+  loss_type: CrossEntropyLoss
+  optimizer_type: Adam
+  lr: [0.0005,0.000025]
+  epochs_lr: [50]
+  l1_reg: Yes
+  l1_coef: 0.0001
+  clip_grad_norm: 0.6
+
+eval:
+  batch_size_test: 128
+  pruning: Yes
+  coef_mul: 100
+
+get_exp:
+  path_exp: ./res_paper_final/mnist_high_noise/
+  #./RES_CLOUD/24_48_max_stride_3channel/
+  filter_occurence: 0
+  filtre_exp: Yes
+  proportion: 0.1
+  proba: 0.05
+
+eval_with_sat:
+  modeltoeval: normal # normal - prune - filtered - prune_filtered
+  mode_eval: verification_vitesse #evaluation_robuste #evaluation #verification #verification_vitesse
+  encoding_type: 0
+  number_ici: 0
+  attack_eps_ici: 0.3
+  coef: 100
+  type_norm_noise: inf #inf, l1, l2
+  quant_noise: 100
+  coef_multiply_equation_noise: 10000
+  ratio_distrib_maxsat: 0
+
+solve_sat_formulas_per_img:
+  sat_solver: Minicard # Glucose3 Glucose4 Minicard Minisat22 Lingeling
+  time_out: 120
