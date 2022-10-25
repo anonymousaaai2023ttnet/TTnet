@@ -1,4 +1,11 @@
-# TT-DCNN
+# REBUTTAL
+
+
+![screen-gif](./Res_rebut.jpeg)
+
+
+
+# TTnet
 
 This repository is the implementation Reproducibility part for submitted paper _Truth-Table Net: A New Convolutional Architecture Encodable By Design Into SAT Formulas_
 
